@@ -1,0 +1,44 @@
+/*************************************************************************************************
+1 : Return all employees who joined before 1st January 2015, order by recent employees first.
+*************************************************************************************************/
+SELECT        *
+FROM            bet365_Employees
+WHERE        (DateJoined < CONVERT(DATETIME, '2015-01-01 00:00:00', 102))
+ORDER BY DateJoined DESC
+
+/*************************************************************************************************
+2 : Return employees who have a car registered, order by LastName A-Z
+*************************************************************************************************/
+SELECT       *
+FROM            dbo.bet365_Employees INNER JOIN
+                         dbo.bet365_Cars ON dbo.bet365_Employees.EmployeeID = dbo.bet365_Cars.EmployeeID
+ORDER BY dbo.bet365_Employees.LastName 
+/*************************************************************************************************
+3 : Return employees who have no car registered, order by LastName A-Z
+*************************************************************************************************/
+SELECT       *
+FROM            dbo.bet365_Employees LEFT OUTER JOIN
+                         dbo.bet365_Cars ON dbo.bet365_Employees.EmployeeID = dbo.bet365_Cars.EmployeeID
+WHERE        (dbo.bet365_Cars.CarID IS NULL)
+ORDER BY dbo.bet365_Employees.LastName
+/*************************************************************************************************
+4 : Return employees who have more than 1 car
+*************************************************************************************************/
+SELECT        TOP (100) PERCENT dbo.bet365_Cars.EmployeeID, COUNT(dbo.bet365_Cars.EmployeeID) AS [No Of Cars], dbo.bet365_Employees.FirstName, dbo.bet365_Employees.LastName, dbo.bet365_Employees.DateJoined
+FROM            dbo.bet365_Cars INNER JOIN
+                         dbo.bet365_Employees ON dbo.bet365_Cars.EmployeeID = dbo.bet365_Employees.EmployeeID
+GROUP BY dbo.bet365_Cars.EmployeeID, dbo.bet365_Employees.FirstName, dbo.bet365_Employees.LastName, dbo.bet365_Employees.DateJoined
+HAVING        (COUNT(dbo.bet365_Cars.EmployeeID) > 1)
+/*************************************************************************************************
+5 : Delete all cars that are registered to an Employee that no longer works for the company.
+To Run use command exec DeleteCarsRegisteredByEmployeeID 5
+Where 5 is a sample EmployeeID
+*************************************************************************************************/
+CREATE PROCEDURE [dbo].[DeleteCarsRegisteredByEmployeeID]
+	@EmployeeID int	
+AS
+BEGIN
+	SET NOCOUNT ON;
+    DELETE FROM bet365_Cars WHERE EmployeeID=@EmployeeID
+END
+
