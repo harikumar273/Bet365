@@ -9,10 +9,12 @@ ORDER BY DateJoined DESC
 /*************************************************************************************************
 2 : Return employees who have a car registered, order by LastName A-Z
 *************************************************************************************************/
-SELECT       *
-FROM            dbo.bet365_Employees INNER JOIN
+SELECT        TOP (100) PERCENT dbo.bet365_Employees.EmployeeID, dbo.bet365_Employees.FirstName, dbo.bet365_Employees.LastName, dbo.bet365_Employees.DateJoined
+FROM            dbo.bet365_Employees LEFT OUTER JOIN
                          dbo.bet365_Cars ON dbo.bet365_Employees.EmployeeID = dbo.bet365_Cars.EmployeeID
-ORDER BY dbo.bet365_Employees.LastName 
+GROUP BY dbo.bet365_Employees.EmployeeID, dbo.bet365_Employees.FirstName, dbo.bet365_Employees.LastName, dbo.bet365_Employees.DateJoined
+HAVING        (COUNT(dbo.bet365_Cars.EmployeeID) >= 1)
+ORDER BY dbo.bet365_Employees.LastName
 /*************************************************************************************************
 3 : Return employees who have no car registered, order by LastName A-Z
 *************************************************************************************************/
